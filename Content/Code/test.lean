@@ -18,29 +18,83 @@ open BigOperators
 -- First example
 example (n m: ℕ) (hn : Even n) (hm : Even m) : Even (n+m) :=
   by
-  rw [Nat.even_iff]
-  rw [Nat.even_iff] at hn hm
-  rw [Nat.add_mod]
+  rw [even_iff]
+  rw [even_iff] at hn hm
+  rw [add_mod]
   rw [hn, hm]
-  norm_num
+  rfl
 
 -- Alternative ways to use rw
 example (n m: ℕ) (hn : Even n) (hm : Even m) : Even (n+m) :=
   by
-  rw [Nat.even_iff, Nat.add_mod]
-  rw [Nat.even_iff] at hn
-  rw [Nat.even_iff] at hm
+  rw [even_iff, add_mod]
+  rw [even_iff] at hn
+  rw [even_iff] at hm
   rw [hm]
   rw [hn]
-  norm_num
+  rfl
 
+ -- Apply, exact and one more use of rw
+lemma my_lemma (n m: ℕ) (hn : Odd n) (hm : Odd m) : Odd (n*m) :=
+  by
+  rw [odd_iff] at *
+  apply odd_mul_odd
+  · exact hn
+  · exact hm
 
---#exit
+-- Shorter syntax
+example (n m: ℕ) (hn : Odd n) (hm : Odd m) : Odd (n*m) :=
+  by
+  rw [odd_iff] at *
+  apply odd_mul_odd <;> assumption
 
+-- Using `my_lemma` in a proof
+example (n : ℕ) (hn : Odd n)  : Odd (n*3) :=
+  by
+  apply my_lemma
+  · exact hn
+  · rw [odd_iff]
+    rfl
 
+-- Using a composite lemma
+example (a : ℕ) (ha : Odd a)  : Odd (a*3) :=
+  by
+  apply my_lemma a _ ha
+  rw [odd_iff]
+  rfl
+
+-- Ignore this, its for aesthetics in what follows
+lemma proof_of_oddity_3 : Odd 3 := by rw [odd_iff] ; rfl
+lemma proof_of_oddity_5 : Odd 5 := by rw [odd_iff] ; rfl
+-- Checks
+#check my_lemma
+#check my_lemma 3
+#check my_lemma 3 5
+#check my_lemma 3 5 proof_of_oddity_3
+#check my_lemma 3 5 proof_of_oddity_3 proof_of_oddity_5
+
+-- Have and exact
+example (n : ℕ) (hn : Odd n)  : Odd (n*3) :=
+  by
+  have H : Odd 3 :=
+    by
+    rw [odd_iff]
+    rfl
+  exact my_lemma n 3 hn H
+
+-- Have without goal
+example (n : ℕ) (hn : Odd n)  : Odd (n*3) :=
+  by
+  have H : Odd 3 :=
+    by
+    rw [odd_iff]
+    rfl
+  have Goal := my_lemma n 3 hn H
+  exact Goal
+
+-- First part of Euclids proof of the infinitude of primes
 theorem Euclid_proof :
-  ∀ (s : Finset ℕ), ∃ p, Nat.Prime p ∧ p ∉ s
-  :=
+  ∀ (s : Finset ℕ), ∃ p, Nat.Prime p ∧ p ∉ s :=
   by
   intro s
   by_contra! h
@@ -78,13 +132,11 @@ theorem Euclid_proof :
   have problem : p ∣ 1 :=
     by
     convert dvd_sub' pdvd this
-    simp only [add_tsub_cancel_left, eq_self_iff_true] -- via simp?
+    rw [add_tsub_cancel_left]
   exact (Nat.Prime.not_dvd_one pp) problem
 
 
-#check Euclid_proof
-
-/-- The standardised statement proven through Euclids proof-/
+-- Infinitude of primes
 lemma Euclid_proof_standardised :
   {n : ℕ | Nat.Prime n }.Infinite :=
   by
