@@ -6,8 +6,7 @@ Author: Yves Jäckle.
 
 import Mathlib.Tactic
 
-
-
+/-- The quotient of n by m in the Euclidean division-/
 def quotient (n m : ℕ) : ℕ :=
   if h : 0 < m ∧ m ≤ n
   then
@@ -16,6 +15,7 @@ def quotient (n m : ℕ) : ℕ :=
   else
     0
 
+/-- The remainder of n by m in the Euclidean division-/
 def remainder (n m : ℕ) : ℕ :=
   if h : 0 < m ∧ m ≤ n
   then
@@ -24,21 +24,34 @@ def remainder (n m : ℕ) : ℕ :=
   else
     n
 
+-- Sanity checks
 #eval quotient 8 3
-
 #eval remainder 8 3
 
+#eval quotient 9 3
+#eval remainder 9 3
 
-#check  Nat.mod_add_div
+#eval quotient 1 3
+#eval remainder 1 3
+
+#eval quotient 0 3
+#eval remainder 0 3
+
+#eval quotient 8 0
+#eval remainder 8 0
+
+#eval quotient 0 0
+#eval remainder 0 0
 
 
+-- The Euclidean division
 example (n k : ℕ) : (remainder n k) + k * (quotient n k) = n :=
   by
   by_cases Q : k = 0
   · rw [Q]
     rw [zero_mul, add_zero]
     rw [remainder]
-    have Ifs_false : ¬ (0 < 0 ∧ 0 ≤ n) := -- explain negation
+    have Ifs_false : ¬ (0 < 0 ∧ 0 ≤ n) :=
       by
       push_neg
       intro problem
@@ -64,3 +77,10 @@ example (n k : ℕ) : (remainder n k) + k * (quotient n k) = n :=
         exact not_and_of_not_right (0<k) K
       rw [dif_neg Ifs_false, dif_neg Ifs_false]
       rw [mul_zero, add_zero]
+
+#check Nat.mod_add_div -- Mathlib's version
+
+-- The remainder is less then the divisor (is it ?)
+example (n k : ℕ) : remainder n k < k :=
+  by
+  sorry
