@@ -45,3 +45,21 @@ match m, n with
 -- Coercion
 #check Int.add
 #eval Int.add 2 (-3)
+
+
+-- Quotients and remainders for ℤ
+
+#eval (8 : ℤ) / (3 : ℤ) -- notaiton for quotients
+#check (8 : ℤ) / (3 : ℤ)
+
+#eval (8 : ℤ) % (3 : ℤ) -- notaiton for remainders
+#check (8 : ℤ) % (3 : ℤ)
+
+#eval (-8 : ℤ) / (3 : ℤ)
+#eval (-8 : ℤ) % (3 : ℤ)
+
+#eval (8 : ℤ) / (-3 : ℤ)
+#eval (8 : ℤ) % (-3 : ℤ)
+
+#eval (-8 : ℤ) / (-3 : ℤ)
+#eval (-8 : ℤ) % (-3 : ℤ)
