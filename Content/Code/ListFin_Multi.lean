@@ -190,3 +190,21 @@ def Multi_append (m M : Multiset ℕ) : Multiset ℕ :=
    sorry
    )
   (m) (M)
+
+
+def lifted_add (a b : Quotient my_inst) : Quotient my_inst :=
+  Quot.lift₂
+  (fun x y => ⟦Int.add x y⟧)
+  (by
+   intro m n k mrn
+   rw [Quotient.eq]
+   dsimp [instHasEquiv, Setoid.r, my_rel] at *
+   rw [Int.add_emod, mrn, ← Int.add_emod]
+   )
+   (by
+    intro m n k mrn
+    rw [Quotient.eq]
+    dsimp [instHasEquiv, Setoid.r, my_rel] at *
+    rw [Int.add_emod, mrn, ← Int.add_emod]
+   )
+   a b
